@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GeMPA — Generalizable Multi-Robot Patrolling with Recurrent Attention Policies</title>
+<meta name="description" content="GeMPA: visibility-based persistent monitoring with a variable team. One policy, unseen maps, unseen team sizes, real quadrupeds.">
+<style>
+:root{
+  --brown:#9A6B10; --blue:#43679C; --ink:#1b1d21; --mut:#5d6470;
+  --line:#e4e6ea; --bg:#ffffff; --soft:#f7f8fa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Times New Roman",Times,Georgia,serif;line-height:1.6;font-size:17px}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px}
+header{padding:56px 0 28px;text-align:center;border-bottom:1px solid var(--line)}
+h1{font-size:2.1rem;line-height:1.25;margin:0 0 6px;font-weight:700;letter-spacing:-.01em}
+.sub{font-size:1.05rem;color:var(--mut);margin:0 0 22px}
+.authors{font-size:1rem;margin:0 0 4px}
+.affil{font-size:.92rem;color:var(--mut);margin:0 0 22px}
+.links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.btn{display:inline-block;padding:8px 18px;border:1px solid var(--line);border-radius:999px;
+  text-decoration:none;color:var(--ink);font-size:.93rem;background:var(--soft)}
+.btn:hover{border-color:var(--brown);color:var(--brown)}
+.btn.primary{background:var(--brown);color:#fff;border-color:var(--brown)}
+section{padding:40px 0;border-bottom:1px solid var(--line)}
+h2{font-size:1.4rem;margin:0 0 14px;font-weight:700}
+h3{font-size:1.05rem;margin:26px 0 8px;font-weight:700}
+p{margin:0 0 14px}
+figure{margin:24px 0}
+figure img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:4px}
+figcaption{font-size:.88rem;color:var(--mut);margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:22px 0}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:16px;text-align:center}
+.stat b{display:block;font-size:1.7rem;color:var(--brown);line-height:1.1}
+.stat span{font-size:.85rem;color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:.92rem;margin:18px 0}
+th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+thead th{border-bottom:2px solid var(--ink);font-weight:700}
+tr.ours td{font-weight:700;color:var(--brown)}
+pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:14px;
+  overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.5}
+ul{margin:0 0 14px;padding-left:22px}
+li{margin-bottom:7px}
+footer{padding:30px 0 60px;font-size:.86rem;color:var(--mut);text-align:center}
+@media(max-width:620px){h1{font-size:1.6rem}body{font-size:16px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>GeMPA: Generalizable Multi-Robot Patrolling<br>with Recurrent Attention Policies</h1>
+    <p class="sub">Visibility-based persistent monitoring with a variable team</p>
+    <p class="authors">Author names withheld for review</p>
+    <p class="affil">Under review</p>
+    <div class="links">
+      <a class="btn primary" href="#">Paper (PDF)</a>
+      <a class="btn" href="#">arXiv</a>
+      <a class="btn" href="#">Code</a>
+      <a class="btn" href="#">Video</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Overview</h2>
+    <p>A patrolling policy that must be rebuilt for every new site and every change in
+    team size does not scale past the site it was built for. GeMPA is an algorithm for
+    visibility-based persistent monitoring with a variable team, formulated so that
+    <b>one set of weights is deployable across sites and team sizes without retraining</b>.</p>
+
+    <p>GeMPA is a shared recurrent policy trained with multi-agent PPO. It pools a
+    variable number of teammate tokens by cross-attention, fuses them with an egocentric
+    idleness summary and lidar ranges through two GRU layers, and outputs body-frame
+    velocity commands. No patrol graph, task allocation or planner appears in the control
+    loop.</p>
+
+    <div class="stats">
+      <div class="stat"><b>60.4%</b><span>lower idleness than the strongest baseline, averaged over team sizes</span></div>
+      <div class="stat"><b>14&times;</b><span>fresher than MA-G-PPO on structured layouts</span></div>
+      <div class="stat"><b>4&times;</b><span>larger teams than seen in training, zero-shot</span></div>
+      <div class="stat"><b>3</b><span>real deployment sites, unmodified weights</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Method</h2>
+    <p>Three choices in the observation make the policy independent of the site and of
+    the team:</p>
+    <ul>
+      <li><b>Egocentric idleness sectors.</b> The idleness field reaches each agent only
+      as its mean within eight fixed angular sectors, so the input width does not grow
+      with the site.</li>
+      <li><b>Masked teammate cross-attention.</b> Teammates arrive as a variable-size set
+      pooled by attention, invariant to their number and ordering.</li>
+      <li><b>Recurrent integration.</b> Two GRU layers carry a belief over where teammates
+      have recently been, under partial observability.</li>
+    </ul>
+    <p>Local geometry arrives through range sensing, so the policy reacts to obstacles it
+    was never trained on. Training uses 1,000 procedurally generated layouts with one to
+    four robots and a budget of 25 million agent-steps.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Results</h2>
+
+    <h3>Persistence</h3>
+    <p>GeMPA achieves the lowest mean idleness at every team size. Each doubling of the
+    team lowers idleness by more than 40%, and the largest single reduction, 49.2%,
+    occurs between eight and sixteen robots, entirely outside the training range.</p>
+
+    <table>
+      <thead>
+        <tr><th>Mean idleness (s)</th><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th></tr>
+      </thead>
+      <tbody>
+        <tr class="ours"><td>GeMPA (ours)</td><td>304.3</td><td>161.9</td><td>94.3</td><td>50.8</td><td>25.8</td></tr>
+        <tr><td>MA-G-PPO</td><td>860.3</td><td>681.6</td><td>467.6</td><td>273.7</td><td>127.1</td></tr>
+        <tr><td>GCS</td><td>454.7</td><td>451.3</td><td>342.8</td><td>324.8</td><td>313.0</td></tr>
+        <tr><td>Watchman</td><td>376.4</td><td>328.5</td><td>322.8</td><td>354.9</td><td>338.4</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.88rem;color:var(--mut)">14 held-out maps, equally weighted. Lower is better.</p>
+
+    <figure>
+      <img src="figs/monitoring.png" alt="Mean idleness and coverage success against team size">
+      <figcaption>Monitoring and coverage success across team sizes. Shading marks team
+      sizes beyond the training range.</figcaption>
+    </figure>
+
+    <h3>Adaptability</h3>
+    <p>Three disturbances absent from training are introduced mid-patrol: corridor
+    closures, robot removal, and communication delays. GeMPA shows smaller within-run
+    idleness increases than MA-G-PPO in every condition. At sixteen robots the increase
+    is 77% smaller under closure, 85% smaller under removal and 75% smaller under the
+    longest delay.</p>
+
+    <figure>
+      <img src="figs/adaptability.png" alt="Within-run idleness change under three disturbances">
+      <figcaption>Within-run idleness change from 400 to 800 s. Positive values indicate
+      staler monitoring; smaller is better.</figcaption>
+    </figure>
+
+    <h3>Unpredictability</h3>
+    <p>Fresher monitoring does not come from a more regular schedule: revisit-gap entropy
+    stays comparable to MA-G-PPO, while the deterministic cyclic route of the Watchman
+    baseline scores lowest throughout, as a predictability measure should report.</p>
+
+    <figure>
+      <img src="figs/entropy.png" alt="Normalised revisit-gap entropy against team size">
+      <figcaption>Normalised revisit-gap entropy, 14 maps. Variable revisit timing does
+      not imply unpredictable routes.</figcaption>
+    </figure>
+
+    <h3>Real-world deployment</h3>
+    <p>The same checkpoint runs unmodified on physical quadrupeds at three sites covering
+    8&times;, 1.5&times; and 0.5&times; the training map area. Coverage agrees with matched
+    simulation to within 0.6 percentage points at every team size, and idleness falls
+    3.7-fold from one to four robots on hardware against 4.0-fold in simulation.</p>
+
+    <figure>
+      <img src="figs/hardware.png" alt="Hardware and matched simulation, one to four robots">
+      <figcaption>Office deployment against matched simulation. Solid lines show hardware,
+      dashed lines simulation.</figcaption>
+    </figure>
+
+    <h3>Training</h3>
+    <figure>
+      <img src="figs/training.png" alt="Training reward and rollout idleness">
+      <figcaption>Training reward and normalised rollout idleness over 25 million
+      agent-steps, five seeds per method.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>BibTeX</h2>
+<pre>@inproceedings{gempa,
+  title     = {Generalizable Multi-Robot Patrolling with Recurrent Attention Policies},
+  author    = {Author names withheld for review},
+  booktitle = {Under review},
+  year      = {2027}
+}</pre>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Page under construction. Links will be filled in on acceptance.</div>
+</footer>
+
+</body>
+</html>
