@@ -1,200 +1,381 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GeMPA — Generalizable Multi-Robot Patrolling with Recurrent Attention Policies</title>
-<meta name="description" content="GeMPA: visibility-based persistent monitoring with a variable team. One policy, unseen maps, unseen team sizes, real quadrupeds.">
-<style>
-:root{
-  --brown:#9A6B10; --blue:#43679C; --ink:#1b1d21; --mut:#5d6470;
-  --line:#e4e6ea; --bg:#ffffff; --soft:#f7f8fa;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Times New Roman",Times,Georgia,serif;line-height:1.6;font-size:17px}
-.wrap{max-width:900px;margin:0 auto;padding:0 24px}
-header{padding:56px 0 28px;text-align:center;border-bottom:1px solid var(--line)}
-h1{font-size:2.1rem;line-height:1.25;margin:0 0 6px;font-weight:700;letter-spacing:-.01em}
-.sub{font-size:1.05rem;color:var(--mut);margin:0 0 22px}
-.authors{font-size:1rem;margin:0 0 4px}
-.affil{font-size:.92rem;color:var(--mut);margin:0 0 22px}
-.links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
-.btn{display:inline-block;padding:8px 18px;border:1px solid var(--line);border-radius:999px;
-  text-decoration:none;color:var(--ink);font-size:.93rem;background:var(--soft)}
-.btn:hover{border-color:var(--brown);color:var(--brown)}
-.btn.primary{background:var(--brown);color:#fff;border-color:var(--brown)}
-section{padding:40px 0;border-bottom:1px solid var(--line)}
-h2{font-size:1.4rem;margin:0 0 14px;font-weight:700}
-h3{font-size:1.05rem;margin:26px 0 8px;font-weight:700}
-p{margin:0 0 14px}
-figure{margin:24px 0}
-figure img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:4px}
-figcaption{font-size:.88rem;color:var(--mut);margin-top:8px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:22px 0}
-.stat{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:16px;text-align:center}
-.stat b{display:block;font-size:1.7rem;color:var(--brown);line-height:1.1}
-.stat span{font-size:.85rem;color:var(--mut)}
-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:18px 0}
-th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line)}
-th:first-child,td:first-child{text-align:left}
-thead th{border-bottom:2px solid var(--ink);font-weight:700}
-tr.ours td{font-weight:700;color:var(--brown)}
-pre{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:14px;
-  overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.5}
-ul{margin:0 0 14px;padding-left:22px}
-li{margin-bottom:7px}
-footer{padding:30px 0 60px;font-size:.86rem;color:var(--mut);text-align:center}
-@media(max-width:620px){h1{font-size:1.6rem}body{font-size:16px}}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeMPa: Generalizable Multi-Robot Patrolling with Recurrent Attention Policies</title>
 </head>
 <body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --navy:#16233A;
+    --navy-2:#1E2E49;
+    --blue:#43679C;
+    --sand:#E3DAC7;
+    --brown:#9A6B10;
 
-<header>
+    --ground:#F4F3EE;
+    --panel:#FBFAF7;
+    --ink:#16202E;
+    --muted:#5C6673;
+    --line:rgba(22,35,58,.16);
+    --grid:rgba(22,35,58,.055);
+    --accent:var(--brown);
+    --on-band:#DDE4EF;
+    --on-band-muted:#93A3BC;
+    --band:var(--navy);
+    --band-grid:rgba(227,218,199,.07);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0F141C;
+      --panel:#161D27;
+      --ink:#E8E5DD;
+      --muted:#97A0AC;
+      --line:rgba(227,218,199,.16);
+      --grid:rgba(227,218,199,.05);
+      --accent:#C79A3E;
+      --band:#0B1119;
+      --band-grid:rgba(227,218,199,.055);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0F141C; --panel:#161D27; --ink:#E8E5DD; --muted:#97A0AC;
+    --line:rgba(227,218,199,.16); --grid:rgba(227,218,199,.05);
+    --accent:#C79A3E; --band:#0B1119; --band-grid:rgba(227,218,199,.055);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    color:var(--ink);
+    background-color:var(--ground);
+    background-image:
+      radial-gradient(120% 60% at 50% -10%, rgba(67,103,156,.10), transparent 60%),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:auto, 30px 30px, 30px 30px;
+    font-family:"Spectral", Georgia, "Times New Roman", serif;
+    font-size:17.5px; line-height:1.66;
+  }
+  .wrap{max-width:1020px; margin:0 auto; padding-inline:20px}
+
+  /* masthead ------------------------------------------------------ */
+  .masthead{
+    background-color:var(--navy);
+    background-image:
+      radial-gradient(90% 120% at 18% 0%, rgba(67,103,156,.55), transparent 62%),
+      linear-gradient(var(--band-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--band-grid) 1px, transparent 1px);
+    background-size:auto, 30px 30px, 30px 30px;
+    color:var(--on-band);
+    padding-block:64px 44px;
+    border-bottom:1px solid rgba(227,218,199,.14);
+  }
+  .masthead .wrap{text-align:center}
+  h1{
+    font-size:clamp(1.7rem, 3.4vw, 2.3rem); line-height:1.2; margin:0 0 16px;
+    font-weight:600; letter-spacing:-.012em; text-wrap:balance; color:#F2EFE7;
+  }
+  .authors{margin:0 0 3px; color:var(--on-band); font-size:1.02rem}
+  .venue{
+    margin:0 0 26px; color:var(--on-band-muted);
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;
+  }
+  .btns{display:flex; flex-wrap:wrap; gap:9px; justify-content:center}
+  .btn{
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size:.78rem; letter-spacing:.06em; text-decoration:none;
+    padding:8px 18px; border-radius:2px;
+    background:var(--sand); color:var(--navy); border:1px solid var(--sand);
+  }
+  .btn:hover{background:#F2EFE7; border-color:#F2EFE7}
+  .btn.off{background:transparent; color:var(--on-band-muted); border-color:rgba(227,218,199,.28); pointer-events:none}
+  .btn:focus-visible{outline:2px solid var(--sand); outline-offset:3px}
+
+  /* sections ------------------------------------------------------ */
+  section{padding-block:48px}
+  .wrap > section + section{border-top:1px solid var(--line)}
+  .eyebrow{
+    display:block; margin:0 0 8px;
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+  }
+  h2{font-size:1.42rem; margin:0 0 18px; font-weight:600; letter-spacing:-.005em}
+  h3{font-size:1.06rem; margin:36px 0 8px; font-weight:600}
+  h3:first-of-type{margin-top:4px}
+  p{margin:0 0 15px; max-width:74ch}
+  .lead{margin:0 0 20px}
+  figure{margin:0}
+  figcaption{
+    font-size:.84rem; line-height:1.5; margin-top:9px; color:var(--muted); max-width:82ch;
+  }
+  img{max-width:100%; height:auto; display:block}
+
+
+  .player{
+    border:1px solid var(--line); border-radius:3px; overflow:hidden;
+    background:var(--navy); line-height:0;
+  }
+  .player video{width:100%; height:auto; display:block}
+
+  .plate{
+    border:1px solid var(--line); border-radius:3px; overflow:hidden;
+    background:var(--panel); padding:14px;
+  }
+  .shot{border:1px solid var(--line); border-radius:3px; overflow:hidden; background:var(--navy)}
+
+  .grid{display:grid; gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .tight{max-width:700px; margin-inline:auto}
+  .tight-wide{max-width:860px; margin-inline:auto}
+
+  .tag{
+    display:inline-block; margin-bottom:6px;
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--sand); border-left:2px solid var(--brown); padding:1px 0 1px 7px;
+  }
+  .tag.b{border-left-color:var(--blue)}
+
+
+  .cards{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:1px; margin-top:26px;
+    background:var(--line); border:1px solid var(--line); border-radius:3px; overflow:hidden;
+  }
+  .card{background:var(--panel); padding:20px 20px 22px}
+  .card h3{margin:6px 0 7px; font-size:1rem}
+  .card p{margin:0; font-size:.94rem; line-height:1.55; max-width:none}
+  .card .unit{
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+  }
+
+  /* dark band ----------------------------------------------------- */
+  .band{
+    background-color:var(--band);
+    background-image:
+      linear-gradient(var(--band-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--band-grid) 1px, transparent 1px);
+    background-size:30px 30px, 30px 30px;
+    color:var(--on-band);
+    border-block:1px solid rgba(227,218,199,.14);
+  }
+  .band h2, .band h3{color:#F2EFE7}
+  .band .lead, .band p{color:var(--on-band)}
+  .band figcaption{color:var(--on-band-muted)}
+  .band .eyebrow{color:var(--sand)}
+  .band .shot{border-color:rgba(227,218,199,.16)}
+  .band .plate{background:rgba(227,218,199,.04); border-color:rgba(227,218,199,.16)}
+
+  /* results ------------------------------------------------------- */
+  ul{margin:0; padding-left:20px; max-width:80ch}
+  li{margin-bottom:10px}
+  .num{color:var(--accent); font-weight:600}
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; margin:2px 0 28px;
+         background:var(--line); border:1px solid var(--line); border-radius:3px; overflow:hidden}
+  .stat{background:var(--panel); padding:18px 14px; text-align:left}
+  .stat b{
+    display:block; font-size:1.7rem; line-height:1.15; color:var(--accent); font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat span{
+    display:block; margin-top:5px; color:var(--muted);
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size:.7rem; line-height:1.45; letter-spacing:.03em;
+  }
+  pre{
+    background:var(--panel); border:1px solid var(--line); border-radius:3px;
+    padding:15px 17px; overflow-x:auto; font-size:.8rem; line-height:1.55;
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace; color:var(--ink);
+  }
+  footer{
+    padding-block:26px 56px; text-align:center; color:var(--muted);
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace; font-size:.72rem; letter-spacing:.05em;
+  }
+
+  @media (max-width:900px){
+    .g4,.g3{grid-template-columns:repeat(2,1fr)}
+    .stats{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:560px){
+    body{font-size:17px}
+    .cards{grid-template-columns:1fr}
+    .g4,.g3,.g2{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+
+<header class="masthead">
   <div class="wrap">
-    <h1>GeMPA: Generalizable Multi-Robot Patrolling<br>with Recurrent Attention Policies</h1>
-    <p class="sub">Visibility-based persistent monitoring with a variable team</p>
+    <h1>GeMPa: Generalizable Multi-Robot Patrolling<br>with Recurrent Attention Policies</h1>
     <p class="authors">Author names withheld for review</p>
-    <p class="affil">Under review</p>
-    <div class="links">
-      <a class="btn primary" href="#">Paper (PDF)</a>
-      <a class="btn" href="#">arXiv</a>
-      <a class="btn" href="#">Code</a>
-      <a class="btn" href="#">Video</a>
+    <p class="venue">Under double-anonymous review</p>
+    <div class="btns">
+      <a class="btn" href="paper.pdf">Paper</a>
+      <a class="btn off" href="#">arXiv</a>
+      <a class="btn off" href="#">Code</a>
+      <a class="btn" href="#videos">Rollouts</a>
     </div>
   </div>
 </header>
 
-<section>
-  <div class="wrap">
-    <h2>Overview</h2>
-    <p>A patrolling policy that must be rebuilt for every new site and every change in
-    team size does not scale past the site it was built for. GeMPA is an algorithm for
-    visibility-based persistent monitoring with a variable team, formulated so that
-    <b>one set of weights is deployable across sites and team sizes without retraining</b>.</p>
+<div class="wrap">
 
-    <p>GeMPA is a shared recurrent policy trained with multi-agent PPO. It pools a
-    variable number of teammate tokens by cross-attention, fuses them with an egocentric
-    idleness summary and lidar ranges through two GRU layers, and outputs body-frame
-    velocity commands. No patrol graph, task allocation or planner appears in the control
-    loop.</p>
-
-    <div class="stats">
-      <div class="stat"><b>60.4%</b><span>lower idleness than the strongest baseline, averaged over team sizes</span></div>
-      <div class="stat"><b>14&times;</b><span>fresher than MA-G-PPO on structured layouts</span></div>
-      <div class="stat"><b>4&times;</b><span>larger teams than seen in training, zero-shot</span></div>
-      <div class="stat"><b>3</b><span>real deployment sites, unmodified weights</span></div>
+  <section>
+    <span class="eyebrow">Overview video</span>
+    <div class="player">
+      <video controls preload="metadata" poster="video/poster.jpg" playsinline>
+        <source src="video/overview.mp4" type="video/mp4">
+        Your browser cannot play this video.
+      </video>
     </div>
-  </div>
-</section>
+    <figcaption>Three minutes: the method, the simulation study, and the hardware deployments.</figcaption>
+  </section>
 
-<section>
+  <section>
+    <span class="eyebrow">Abstract</span>
+    <p>Persistent multi-robot patrolling is a complex real-world problem, requiring repeated observation of an environment while adapting to changes in layout and team composition, under three requirements: persistence, adaptability, and unpredictability. We present GeMPa, a multi-agent reinforcement learning policy for visibility-based persistent monitoring that commands body-frame velocities, with no patrol graph, task allocation or planner in the control loop. It combines a compact egocentric idleness summary and lidar ranges with attention over a variable number of teammates and recurrent temporal reasoning. Trained with proximal policy optimization on procedurally generated map layouts with one to four robots, a single shared policy transfers zero-shot to unseen maps and teams of up to sixteen robots. It attains the lowest mean idleness at every team size, with a mean per-map idleness reduction of 45.1% relative to the next best method, and idleness falls 91.5% from one to sixteen robots. Under map changes, robot losses, and communication delays at sixteen robots, its idleness increase is 85%, 89% and 76% smaller than the best baseline, while revisit-time variability remains comparable. The same weights run unmodified on simulated and physical Go2 quadrupeds at three sites, the largest eight times the average training map, matching simulated counterpart coverage to within 0.6 percentage points.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Method</span>
+    <h2>Approach</h2>
+    <figure class="plate">
+      <img src="figs/architecture.png" alt="GeMPa architecture: local observation and team tokens feed an MLP, GRU and actor head; a centralized critic is used only during training" loading="lazy">
+    </figure>
+    <figcaption>Every robot runs the same recurrent actor on its own lidar scan, an egocentric idleness summary and a token per teammate, and outputs body-frame velocities directly. The centralized critic is used during training only and discarded at deployment, so execution is fully decentralized.</figcaption>
+
+    <div class="cards">
+      <div class="card">
+        <span class="unit">Observation</span>
+        <h3>One shared policy, local inputs</h3>
+        <p>Every robot runs the same weights on its own pose and heading, a sixteen-ray lidar scan, and an eight-sector histogram of how stale the space around it is, in its own body frame. No global map, no patrol graph, no assigned region.</p>
+      </div>
+      <div class="card">
+        <span class="unit">Team encoder</span>
+        <h3>Attention over a variable-size team</h3>
+        <p>Teammates arrive as an unordered set of tokens carrying distance, bearing and relative heading. Cross-attention pools them into a fixed-width embedding, invariant to team size and ordering. That is what lets a policy trained with four robots run with sixteen.</p>
+      </div>
+      <div class="card">
+        <span class="unit">Memory</span>
+        <h3>Recurrence for what is already covered</h3>
+        <p>A GRU carries what one observation cannot: where the robot came from and which regions it has already refreshed. Ablating it costs nothing at one robot and costs at every larger team, so the gain is coordination, not capacity.</p>
+      </div>
+      <div class="card">
+        <span class="unit">Training</span>
+        <h3>Centralized critic, decentralized execution</h3>
+        <p>The critic sees the full team state during training only. Each robot then acts on what it senses and on the tokens its teammates broadcast, so a lost robot or a delayed message degrades the team gradually instead of breaking an assignment.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="band" id="videos">
   <div class="wrap">
-    <h2>Method</h2>
-    <p>Three choices in the observation make the policy independent of the site and of
-    the team:</p>
+    <section>
+      <span class="eyebrow">Rollouts</span>
+      <h2>GeMPa in action</h2>
+
+      <h3>Training in simulation</h3>
+      <p class="lead">Training runs on procedurally generated room layouts with one to four robots. Each robot sees only its own lidar scan, an eight-sector summary of how stale the space around it is, and a token per teammate. Cells darken as they are observed and pale out as they go stale; the trail behind each robot is its recent path.</p>
+      <figure class="shot" style="max-width:560px; margin-inline:auto">
+        <img src="gifs/sim/train_n2.gif" alt="Training rollout on a procedural room layout with two robots" loading="lazy">
+      </figure>
+      <figcaption>A rollout on a procedural training map. Mean idleness is reported live in the panel header.</figcaption>
+
+      <h3>Generalization across team size</h3>
+      <p class="lead">Training only ever sees one to four robots. The same checkpoint then runs with eight and sixteen without retraining, re-tuning or any reassignment: the team simply re-partitions the floor. Mean idleness falls from 57.0 s at two robots to 7.6 s at sixteen on this layout.</p>
+      <div class="grid g4 tight-wide">
+        <figure><span class="tag">2 robots</span><div class="shot"><img src="gifs/sim/train_n2.gif" alt="Two robots" loading="lazy"></div></figure>
+        <figure><span class="tag">4 robots</span><div class="shot"><img src="gifs/sim/train_n4.gif" alt="Four robots" loading="lazy"></div></figure>
+        <figure><span class="tag b">8 robots</span><div class="shot"><img src="gifs/sim/train_n8.gif" alt="Eight robots" loading="lazy"></div></figure>
+        <figure><span class="tag b">16 robots</span><div class="shot"><img src="gifs/sim/train_n16.gif" alt="Sixteen robots" loading="lazy"></div></figure>
+      </div>
+      <figcaption>Brown rule: inside the training range. Blue rule: beyond anything seen in training.</figcaption>
+
+      <h3>Generalization across layouts</h3>
+      <p class="lead">The policy is never given the map, so the same weights run on layouts that share no structure with one another: open atria, rings, corridors, spokes, warehouse aisles, a parking lot, and real customer sites. All twelve are held out from training, all are patrolled by the same four-robot checkpoint.</p>
+      <div class="grid g4 tight-wide">
+        <figure><div class="shot"><img src="gifs/sim/map_atrium.gif" alt="Atrium layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_office_r000.gif" alt="Office layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_warehouse.gif" alt="Warehouse layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_final_parking.gif" alt="Parking lot layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_circular_ring.gif" alt="Circular ring layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_rectangular_ring.gif" alt="Rectangular ring layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_half_ring.gif" alt="Half ring layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_spokes.gif" alt="Spokes layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_circular_obstacles.gif" alt="Circular layout with obstacles" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_barbell.gif" alt="Barbell layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_rot30.gif" alt="Rotated layout" loading="lazy"></div></figure>
+        <figure><div class="shot"><img src="gifs/sim/map_customer3.gif" alt="Customer site layout" loading="lazy"></div></figure>
+      </div>
+      <figcaption>Twelve held-out layouts, four robots each. Difficulty is visible in the reported idleness: a ring closes in 7.4 s, a long thin site takes 74.0 s with the same policy.</figcaption>
+
+      <h3>On the field: the office, one team at a time</h3>
+      <p class="lead">The same checkpoint drives physical Go2 quadrupeds in an office it has never seen. Nothing changes between these runs except how many robots are switched on.</p>
+      <div class="grid g3 tight-wide">
+        <figure><span class="tag">3 robots</span><div class="shot"><img src="gifs/office_a.gif" alt="Office patrol, three robots" loading="lazy"></div></figure>
+        <figure><span class="tag">4 robots</span><div class="shot"><img src="gifs/office_c.gif" alt="Office patrol, four robots" loading="lazy"></div></figure>
+        <figure><span class="tag">4 robots &middot; start of run</span><div class="shot"><img src="gifs/office_d.gif" alt="Four robots at the start of an office run, one leaving the group" loading="lazy"></div></figure>
+      </div>
+      <figcaption>Idleness falls 3.7-fold from one to four robots on hardware, against 4.0-fold in matched simulation, so the team-scaling effect transfers and not only the single-robot behaviour.</figcaption>
+
+      <h3>Real-world deployments</h3>
+      <p class="lead">The same checkpoint runs on physical Go2 quadrupeds at two outdoor sites, neither of them seen in training and neither given to the policy as a map. The industrial test site is eight times the average training map.</p>
+      <div class="grid g2 tight-wide">
+        <figure><span class="tag">Industrial test site &middot; 10&times;</span><div class="shot"><img src="gifs/field/industrial_site.gif" alt="Two quadrupeds patrolling an industrial test site" loading="lazy"></div></figure>
+        <figure><span class="tag b">Industrial test site &middot; recorded idleness</span><div class="shot"><img src="gifs/field/map_industrial.gif" alt="Recorded idleness map of the industrial site deployment" loading="lazy"></div></figure>
+        <figure><span class="tag">Parking lot &middot; 10&times;</span><div class="shot"><img src="gifs/field/parking_lot.gif" alt="Two quadrupeds patrolling a parking lot, seen from above" loading="lazy"></div></figure>
+        <figure><span class="tag b">Parking lot &middot; recorded idleness</span><div class="shot"><img src="gifs/field/map_parking.gif" alt="Recorded idleness map of the parking lot deployment" loading="lazy"></div></figure>
+      </div>
+      <figcaption>Camera on the left, the idleness field rebuilt from the recorded poses on the right, cell by cell as the two robots sweep the site. Top: a seven-minute patrol of the industrial site, played at ten times real speed. Bottom: the parking lot, where coverage rises from 70.0% to 95.4% and mean idleness falls from 155.3 s to 69.0 s over four minutes.</figcaption>
+    </section>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <span class="eyebrow">Results</span>
+    <h2>Key results</h2>
+    <div class="stats">
+      <div class="stat"><b>45.1%</b><span>lower mean idleness than the next best method</span></div>
+      <div class="stat"><b>91.5%</b><span>idleness drop from one to sixteen robots</span></div>
+      <div class="stat"><b>16</b><span>robots at deployment, four in training</span></div>
+      <div class="stat"><b>0.6 pp</b><span>coverage gap, hardware against simulation</span></div>
+    </div>
     <ul>
-      <li><b>Egocentric idleness sectors.</b> The idleness field reaches each agent only
-      as its mean within eight fixed angular sectors, so the input width does not grow
-      with the site.</li>
-      <li><b>Masked teammate cross-attention.</b> Teammates arrive as a variable-size set
-      pooled by attention, invariant to their number and ordering.</li>
-      <li><b>Recurrent integration.</b> Two GRU layers carry a belief over where teammates
-      have recently been, under partial observability.</li>
+      <li><span class="num">Persistence.</span> Lowest mean idleness at every team size across fourteen held-out maps, a mean per-map reduction of 45.1% against the next best method.</li>
+      <li><span class="num">Adaptability.</span> Under corridor closure, robot loss and communication delay at sixteen robots, the within-run idleness increase is up to 89% smaller than the best baseline.</li>
+      <li><span class="num">Unpredictability.</span> Revisit-time variability stays comparable to the learned baseline and above the deterministic Watchman route, while monitoring is substantially fresher.</li>
+      <li><span class="num">Zero-shot transfer.</span> A single checkpoint covers every held-out map and team size without retraining, outperforming every baseline in all cases.</li>
+      <li><span class="num">On the field.</span> The same weights run unmodified on Go2 quadrupeds at three sites, the largest eight times the average training map, matching simulated coverage to within 0.6 percentage points and preserving the team-size scaling, 3.7-fold against 4.0-fold from one to four robots.</li>
     </ul>
-    <p>Local geometry arrives through range sensing, so the policy reacts to obstacles it
-    was never trained on. Training uses 1,000 procedurally generated layouts with one to
-    four robots and a budget of 25 million agent-steps.</p>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="wrap">
-    <h2>Results</h2>
-
-    <h3>Persistence</h3>
-    <p>GeMPA achieves the lowest mean idleness at every team size. Each doubling of the
-    team lowers idleness by more than 40%, and the largest single reduction, 49.2%,
-    occurs between eight and sixteen robots, entirely outside the training range.</p>
-
-    <table>
-      <thead>
-        <tr><th>Mean idleness (s)</th><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th></tr>
-      </thead>
-      <tbody>
-        <tr class="ours"><td>GeMPA (ours)</td><td>304.3</td><td>161.9</td><td>94.3</td><td>50.8</td><td>25.8</td></tr>
-        <tr><td>MA-G-PPO</td><td>860.3</td><td>681.6</td><td>467.6</td><td>273.7</td><td>127.1</td></tr>
-        <tr><td>GCS</td><td>454.7</td><td>451.3</td><td>342.8</td><td>324.8</td><td>313.0</td></tr>
-        <tr><td>Watchman</td><td>376.4</td><td>328.5</td><td>322.8</td><td>354.9</td><td>338.4</td></tr>
-      </tbody>
-    </table>
-    <p style="font-size:.88rem;color:var(--mut)">14 held-out maps, equally weighted. Lower is better.</p>
-
-    <figure>
-      <img src="figs/monitoring.png" alt="Mean idleness and coverage success against team size">
-      <figcaption>Monitoring and coverage success across team sizes. Shading marks team
-      sizes beyond the training range.</figcaption>
-    </figure>
-
-    <h3>Adaptability</h3>
-    <p>Three disturbances absent from training are introduced mid-patrol: corridor
-    closures, robot removal, and communication delays. GeMPA shows smaller within-run
-    idleness increases than MA-G-PPO in every condition. At sixteen robots the increase
-    is 77% smaller under closure, 85% smaller under removal and 75% smaller under the
-    longest delay.</p>
-
-    <figure>
-      <img src="figs/adaptability.png" alt="Within-run idleness change under three disturbances">
-      <figcaption>Within-run idleness change from 400 to 800 s. Positive values indicate
-      staler monitoring; smaller is better.</figcaption>
-    </figure>
-
-    <h3>Unpredictability</h3>
-    <p>Fresher monitoring does not come from a more regular schedule: revisit-gap entropy
-    stays comparable to MA-G-PPO, while the deterministic cyclic route of the Watchman
-    baseline scores lowest throughout, as a predictability measure should report.</p>
-
-    <figure>
-      <img src="figs/entropy.png" alt="Normalised revisit-gap entropy against team size">
-      <figcaption>Normalised revisit-gap entropy, 14 maps. Variable revisit timing does
-      not imply unpredictable routes.</figcaption>
-    </figure>
-
-    <h3>Real-world deployment</h3>
-    <p>The same checkpoint runs unmodified on physical quadrupeds at three sites covering
-    8&times;, 1.5&times; and 0.5&times; the training map area. Coverage agrees with matched
-    simulation to within 0.6 percentage points at every team size, and idleness falls
-    3.7-fold from one to four robots on hardware against 4.0-fold in simulation.</p>
-
-    <figure>
-      <img src="figs/hardware.png" alt="Hardware and matched simulation, one to four robots">
-      <figcaption>Office deployment against matched simulation. Solid lines show hardware,
-      dashed lines simulation.</figcaption>
-    </figure>
-
-    <h3>Training</h3>
-    <figure>
-      <img src="figs/training.png" alt="Training reward and rollout idleness">
-      <figcaption>Training reward and normalised rollout idleness over 25 million
-      agent-steps, five seeds per method.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
+  <section>
+    <span class="eyebrow">Cite</span>
     <h2>BibTeX</h2>
-<pre>@inproceedings{gempa,
-  title     = {Generalizable Multi-Robot Patrolling with Recurrent Attention Policies},
-  author    = {Author names withheld for review},
+<pre>@inproceedings{gempa2027,
+  title     = {GeMPa: Generalizable Multi-Robot Patrolling with Recurrent Attention Policies},
+  author    = {Anonymous},
   booktitle = {Under review},
   year      = {2027}
 }</pre>
-  </div>
-</section>
+  </section>
+
+</div>
 
 <footer>
-  <div class="wrap">Page under construction. Links will be filled in on acceptance.</div>
+  <div class="wrap">Anonymous submission under review &middot; all clips are unedited recordings of hardware and simulation runs</div>
 </footer>
 
 </body>
