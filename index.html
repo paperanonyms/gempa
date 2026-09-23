@@ -58,9 +58,9 @@
       linear-gradient(90deg, var(--grid) 1px, transparent 1px);
     background-size:auto, 30px 30px, 30px 30px;
     font-family:"Spectral", Georgia, "Times New Roman", serif;
-    font-size:17.5px; line-height:1.66;
+    font-size:18.5px; line-height:1.64;
   }
-  .wrap{max-width:1020px; margin:0 auto; padding-inline:20px}
+  .wrap{max-width:1320px; margin:0 auto; padding-inline:24px}
 
   /* masthead ------------------------------------------------------ */
   .masthead{
@@ -128,12 +128,12 @@
   }
   .shot{border:1px solid var(--line); border-radius:3px; overflow:hidden; background:var(--navy)}
 
-  .grid{display:grid; gap:14px}
+  .grid{display:grid; gap:16px}
   .g2{grid-template-columns:repeat(2,1fr)}
   .g3{grid-template-columns:repeat(3,1fr)}
   .g4{grid-template-columns:repeat(4,1fr)}
-  .tight{max-width:820px; margin-inline:auto}
-  .tight-wide{max-width:980px; margin-inline:auto}
+  .tight{max-width:1060px; margin-inline:auto}
+  .tight-wide{max-width:1280px; margin-inline:auto}
 
   .pair .shot{
     aspect-ratio:8/7; background:#fff;
@@ -300,7 +300,7 @@
 
       <h3>Training in simulation</h3>
       <p class="lead">Training runs on procedurally generated room layouts with one to four robots. Cells darken as they are observed and pale out as they go stale; the trail behind each robot is its recent path.</p>
-      <figure class="shot" style="max-width:680px; margin-inline:auto">
+      <figure class="shot" style="max-width:880px; margin-inline:auto">
         <img src="gifs/sim/train_n2.gif" alt="Training rollout on a procedural room layout with two robots" loading="lazy">
       </figure>
       <figcaption>A rollout on a procedural training map. Mean idleness is reported live in the panel header.</figcaption>
