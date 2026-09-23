@@ -132,8 +132,8 @@
   .g2{grid-template-columns:repeat(2,1fr)}
   .g3{grid-template-columns:repeat(3,1fr)}
   .g4{grid-template-columns:repeat(4,1fr)}
-  .tight{max-width:700px; margin-inline:auto}
-  .tight-wide{max-width:860px; margin-inline:auto}
+  .tight{max-width:820px; margin-inline:auto}
+  .tight-wide{max-width:980px; margin-inline:auto}
 
   .tag{
     display:inline-block; margin-bottom:6px;
@@ -256,7 +256,7 @@
       <div class="card">
         <span class="unit">Observation</span>
         <h3>One shared policy, local inputs</h3>
-        <p>Every robot runs the same weights on its own pose and heading, a sixteen-ray lidar scan, and an eight-sector histogram of how stale the space around it is, in its own body frame. No global map, no patrol graph, no assigned region.</p>
+        <p>Every robot runs the same weights on its own pose and heading, a sixteen-ray lidar scan, and an eight-sector histogram of how stale the space around it is, in its own body frame. No patrol graph, no task allocation, no assigned region.</p>
       </div>
       <div class="card">
         <span class="unit">Team encoder</span>
@@ -285,8 +285,8 @@
       <h2>GeMPa in action</h2>
 
       <h3>Training in simulation</h3>
-      <p class="lead">Training runs on procedurally generated room layouts with one to four robots. Each robot sees only its own lidar scan, an eight-sector summary of how stale the space around it is, and a token per teammate. Cells darken as they are observed and pale out as they go stale; the trail behind each robot is its recent path.</p>
-      <figure class="shot" style="max-width:560px; margin-inline:auto">
+      <p class="lead">Training runs on procedurally generated room layouts with one to four robots. Cells darken as they are observed and pale out as they go stale; the trail behind each robot is its recent path.</p>
+      <figure class="shot" style="max-width:680px; margin-inline:auto">
         <img src="gifs/sim/train_n2.gif" alt="Training rollout on a procedural room layout with two robots" loading="lazy">
       </figure>
       <figcaption>A rollout on a procedural training map. Mean idleness is reported live in the panel header.</figcaption>
@@ -302,7 +302,7 @@
       <figcaption>Brown rule: inside the training range. Blue rule: beyond anything seen in training.</figcaption>
 
       <h3>Generalization across layouts</h3>
-      <p class="lead">The policy is never given the map, so the same weights run on layouts that share no structure with one another: open atria, rings, corridors, spokes, warehouse aisles, a parking lot, and real customer sites. All twelve are held out from training, all are patrolled by the same four-robot checkpoint.</p>
+      <p class="lead">A single set of weights runs on layouts that share no structure with one another: open atria, rings, corridors, spokes, warehouse aisles, a parking lot, and real customer sites. All twelve are held out from training, all are patrolled by the same four-robot checkpoint.</p>
       <div class="grid g4 tight-wide">
         <figure><div class="shot"><img src="gifs/sim/map_atrium.gif" alt="Atrium layout" loading="lazy"></div></figure>
         <figure><div class="shot"><img src="gifs/sim/map_office_r000.gif" alt="Office layout" loading="lazy"></div></figure>
@@ -329,7 +329,7 @@
       <figcaption>Idleness falls 3.7-fold from one to four robots on hardware, against 4.0-fold in matched simulation, so the team-scaling effect transfers and not only the single-robot behaviour.</figcaption>
 
       <h3>Real-world deployments</h3>
-      <p class="lead">The same checkpoint runs on physical Go2 quadrupeds at two outdoor sites, neither of them seen in training and neither given to the policy as a map. The industrial test site is eight times the average training map.</p>
+      <p class="lead">The same checkpoint runs on physical Go2 quadrupeds at two outdoor sites, neither of them seen in training. The industrial test site is eight times the average training map.</p>
       <div class="grid g2 tight-wide">
         <figure><span class="tag">Industrial test site &middot; 10&times;</span><div class="shot"><img src="gifs/field/industrial_site.gif" alt="Two quadrupeds patrolling an industrial test site" loading="lazy"></div></figure>
         <figure><span class="tag b">Industrial test site &middot; recorded idleness</span><div class="shot"><img src="gifs/field/map_industrial.gif" alt="Recorded idleness map of the industrial site deployment" loading="lazy"></div></figure>
