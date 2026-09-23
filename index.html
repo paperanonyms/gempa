@@ -141,6 +141,14 @@
   }
   .pair .shot img{max-width:100%; max-height:100%; width:auto}
 
+  .ph{
+    aspect-ratio:8/7; border:1px dashed var(--line); border-radius:3px;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+    font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--on-band-muted); padding:16px;
+  }
+
   .tag{
     display:inline-block; margin-bottom:6px;
     font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
@@ -327,8 +335,9 @@
 
       <h3>On the field: the office, one team at a time</h3>
       <p class="lead">The same checkpoint drives physical Go2 quadrupeds in an office it has never seen. Nothing changes between these runs except how many robots are switched on.</p>
-      <div class="grid g3 tight-wide pair">
+      <div class="grid g2 tight-wide pair">
         <figure><span class="tag">3 robots</span><div class="shot"><img src="gifs/office_a.gif" alt="Office patrol, three robots" loading="lazy"></div></figure>
+        <figure><span class="tag b">3 robots &middot; recorded idleness</span><div class="ph">Idleness map to follow</div></figure>
         <figure><span class="tag">4 robots</span><div class="shot"><img src="gifs/office_4cam.gif" alt="Office patrol, four robots" loading="lazy"></div></figure>
         <figure><span class="tag b">4 robots &middot; recorded idleness</span><div class="shot"><img src="gifs/office_4map.gif" alt="Recorded idleness map of the four-robot office deployment" loading="lazy"></div></figure>
       </div>
