@@ -309,14 +309,13 @@
       <figcaption>The training range, one to four robots on the same procedural layout, at ten times real speed. Mean idleness is reported live in each panel header.</figcaption>
 
       <h3>Generalization across team size</h3>
-      <p class="lead">Training only ever sees one to four robots. The same checkpoint then runs with eight and sixteen without retraining, re-tuning or any reassignment: the team simply re-partitions the floor. Mean idleness falls from 57.0 s at two robots to 7.6 s at sixteen on this layout.</p>
-      <div class="grid g4 tight-wide">
-        <figure><span class="tag">2 robots</span><div class="shot"><img src="gifs/sim/train_n2.gif" alt="Two robots" loading="lazy"></div></figure>
-        <figure><span class="tag">4 robots</span><div class="shot"><img src="gifs/sim/train_n4.gif" alt="Four robots" loading="lazy"></div></figure>
-        <figure><span class="tag b">8 robots</span><div class="shot"><img src="gifs/sim/train_n8.gif" alt="Eight robots" loading="lazy"></div></figure>
-        <figure><span class="tag b">16 robots</span><div class="shot"><img src="gifs/sim/train_n16.gif" alt="Sixteen robots" loading="lazy"></div></figure>
+      <p class="lead">Training only ever sees one to four robots. The same checkpoint then runs with eight, twelve and sixteen without retraining, re-tuning or any reassignment: the team simply re-partitions the floor. Across the held-out maps, idleness falls 91.5% from one to sixteen robots.</p>
+      <div class="grid g3 tight-wide">
+        <figure><span class="tag b">8 robots</span><div class="shot"><img src="gifs/sim/ood_8robots.gif" alt="Eight robots on the procedural layout" loading="lazy"></div></figure>
+        <figure><span class="tag b">12 robots</span><div class="shot"><img src="gifs/sim/ood_12robots.gif" alt="Twelve robots on the procedural layout" loading="lazy"></div></figure>
+        <figure><span class="tag b">16 robots</span><div class="shot"><img src="gifs/sim/ood_16robots.gif" alt="Sixteen robots on the procedural layout" loading="lazy"></div></figure>
       </div>
-      <figcaption>Brown rule: inside the training range. Blue rule: beyond anything seen in training.</figcaption>
+      <figcaption>Every team size here is beyond anything seen in training, on the same layout as the row above and at ten times real speed.</figcaption>
 
       <h3>Generalization across layouts</h3>
       <p class="lead">A single set of weights runs on layouts that share no structure with one another: open atria, rings, corridors, spokes, warehouse aisles, a parking lot, and real customer sites. All twelve are held out from training, all are patrolled by the same four-robot checkpoint.</p>
