@@ -297,6 +297,7 @@
     <section>
       <span class="eyebrow">Rollouts</span>
       <h2>GeMPa in action</h2>
+      <p class="lead">Every clip below plays at ten times real speed.</p>
 
       <h3>Training in simulation</h3>
       <p class="lead">Training runs on procedurally generated room layouts with one to four robots. Cells darken as they are observed and pale out as they go stale; the trail behind each robot is its recent path.</p>
@@ -306,7 +307,7 @@
         <figure><span class="tag">3 robots</span><div class="shot"><img src="gifs/sim/train_fix_3robots.gif" alt="Training rollout, three robots" loading="lazy"></div></figure>
         <figure><span class="tag">4 robots</span><div class="shot"><img src="gifs/sim/train_fix_4robots.gif" alt="Training rollout, four robots" loading="lazy"></div></figure>
       </div>
-      <figcaption>The training range, one to four robots on the same procedural layout, at ten times real speed. Mean idleness is reported live in each panel header.</figcaption>
+      <figcaption>The training range, one to four robots on the same procedural layout. Mean idleness is reported live in each panel header.</figcaption>
 
       <h3>Generalization across team size</h3>
       <p class="lead">Training only ever sees one to four robots. The same checkpoint then runs with eight, twelve and sixteen without retraining, re-tuning or any reassignment: the team simply re-partitions the floor. Across the held-out maps, idleness falls 91.5% from one to sixteen robots.</p>
@@ -315,7 +316,7 @@
         <figure><span class="tag b">12 robots</span><div class="shot"><img src="gifs/sim/ood_12robots.gif" alt="Twelve robots on the procedural layout" loading="lazy"></div></figure>
         <figure><span class="tag b">16 robots</span><div class="shot"><img src="gifs/sim/ood_16robots.gif" alt="Sixteen robots on the procedural layout" loading="lazy"></div></figure>
       </div>
-      <figcaption>Every team size here is beyond anything seen in training, on the same layout as the row above and at ten times real speed.</figcaption>
+      <figcaption>Every team size here is beyond anything seen in training, on the same layout as the row above.</figcaption>
 
       <h3>Generalization across layouts</h3>
       <p class="lead">A single set of weights runs on layouts that share no structure with one another: open atria, rings, corridors, spokes, warehouse aisles, a parking lot, and real customer sites. All twelve are held out from training, all are patrolled by the same four-robot checkpoint.</p>
@@ -348,12 +349,12 @@
       <h3>Real-world deployments</h3>
       <p class="lead">The same checkpoint runs on physical Go2 quadrupeds at two outdoor sites, neither of them seen in training. The industrial test site is eight times the average training map.</p>
       <div class="grid g2 tight-wide pair">
-        <figure><span class="tag">Industrial test site &middot; 10&times;</span><div class="shot"><img src="gifs/field/industrial_site.gif" alt="Two quadrupeds patrolling an industrial test site" loading="lazy"></div></figure>
+        <figure><span class="tag">Industrial test site</span><div class="shot"><img src="gifs/field/industrial_site.gif" alt="Two quadrupeds patrolling an industrial test site" loading="lazy"></div></figure>
         <figure><span class="tag b">Industrial test site &middot; recorded idleness</span><div class="shot"><img src="gifs/field/map_industrial.gif" alt="Recorded idleness map of the industrial site deployment" loading="lazy"></div></figure>
-        <figure><span class="tag">Parking lot &middot; 10&times;</span><div class="shot"><img src="gifs/field/parking_lot.gif" alt="Two quadrupeds patrolling a parking lot, seen from above" loading="lazy"></div></figure>
+        <figure><span class="tag">Parking lot</span><div class="shot"><img src="gifs/field/parking_lot.gif" alt="Two quadrupeds patrolling a parking lot, seen from above" loading="lazy"></div></figure>
         <figure><span class="tag b">Parking lot &middot; recorded idleness</span><div class="shot"><img src="gifs/field/map_parking.gif" alt="Recorded idleness map of the parking lot deployment" loading="lazy"></div></figure>
       </div>
-      <figcaption>Camera on the left, the idleness field rebuilt from the recorded poses on the right, cell by cell as the two robots sweep the site. Top: a seven-minute patrol of the industrial site, played at ten times real speed. Bottom: the parking lot, where coverage rises from 70.0% to 95.4% and mean idleness falls from 155.3 s to 69.0 s over four minutes.</figcaption>
+      <figcaption>Camera on the left, the idleness field rebuilt from the recorded poses on the right, cell by cell as the two robots sweep the site. Top: a seven-minute patrol of the industrial site. Bottom: the parking lot, where coverage rises from 70.0% to 95.4% and mean idleness falls from 155.3 s to 69.0 s over four minutes.</figcaption>
     </section>
   </div>
 </div>
