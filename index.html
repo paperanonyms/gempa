@@ -136,13 +136,13 @@
   .tight-wide{max-width:1280px; margin-inline:auto}
 
   .pair .shot{
-    aspect-ratio:16/10; background:#fff;
+    aspect-ratio:7/5; background:#fff;
     display:flex; align-items:center; justify-content:center;
   }
   .pair .shot img{width:100%; height:100%; object-fit:contain}
 
   .ph{
-    aspect-ratio:16/10; border:1px dashed var(--line); border-radius:3px;
+    aspect-ratio:7/5; border:1px dashed var(--line); border-radius:3px;
     display:flex; align-items:center; justify-content:center; text-align:center;
     font-family:"IBM Plex Mono", ui-monospace, Menlo, monospace;
     font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
@@ -300,10 +300,13 @@
 
       <h3>Training in simulation</h3>
       <p class="lead">Training runs on procedurally generated room layouts with one to four robots. Cells darken as they are observed and pale out as they go stale; the trail behind each robot is its recent path.</p>
-      <figure class="shot" style="max-width:880px; margin-inline:auto">
-        <img src="gifs/sim/train_n2.gif" alt="Training rollout on a procedural room layout with two robots" loading="lazy">
-      </figure>
-      <figcaption>A rollout on a procedural training map. Mean idleness is reported live in the panel header.</figcaption>
+      <div class="grid g4 tight-wide">
+        <figure><span class="tag">1 robot</span><div class="shot"><img src="gifs/sim/train_fix_1robot.gif" alt="Training rollout, one robot" loading="lazy"></div></figure>
+        <figure><span class="tag">2 robots</span><div class="shot"><img src="gifs/sim/train_fix_2robots.gif" alt="Training rollout, two robots" loading="lazy"></div></figure>
+        <figure><span class="tag">3 robots</span><div class="shot"><img src="gifs/sim/train_fix_3robots.gif" alt="Training rollout, three robots" loading="lazy"></div></figure>
+        <figure><span class="tag">4 robots</span><div class="shot"><img src="gifs/sim/train_fix_4robots.gif" alt="Training rollout, four robots" loading="lazy"></div></figure>
+      </div>
+      <figcaption>The training range, one to four robots on the same procedural layout, at ten times real speed. Mean idleness is reported live in each panel header.</figcaption>
 
       <h3>Generalization across team size</h3>
       <p class="lead">Training only ever sees one to four robots. The same checkpoint then runs with eight and sixteen without retraining, re-tuning or any reassignment: the team simply re-partitions the floor. Mean idleness falls from 57.0 s at two robots to 7.6 s at sixteen on this layout.</p>
